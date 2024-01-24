@@ -1,13 +1,19 @@
-exports.getProductsLanding = (req, res, next) => {
-    res.json({ message: 'Get Products Landing Page' })
+exports.getAllProduct = (req, res, next) => {
+    res.json({ message: 'Get All Product' })
 }
 
-exports.getProducts = (req, res, next) => {
-    const { search, promotion, brand, category } = req.query
-    res.json({ search, promotion, brand, category })
+exports.getProduct = (req, res, next) => {
+    res.json({ message: 'Get Product' })
 }
 
-exports.getProductById = (req, res, next) => {
-    const { productId } = req.params
-    res.json({ productId })
+exports.createProduct = (req, res, next) => {
+    res.json({ message: 'Create Product' })
+}
+
+exports.updateProduct = (req, res, next) => {
+    res.json({ message: 'Update Product' })
+}
+
+exports.deleteProduct = (req, res, next) => {
+    res.json({ message: 'Delete Product' })
 }

@@ -1,5 +1,5 @@
 const notFoundHandler = (req, res, next) => {
-    res.status(400).json({ message: 'Not Found' })
+    res.status(404).json({ message: 'resource is not found on this server' })
 }
 
 module.exports = notFoundHandler

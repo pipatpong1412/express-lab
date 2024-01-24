@@ -1,25 +1,65 @@
-exports.register = (req, res, next) => {
-    const { email, password } = req.body
-    res.json({ email, password })
+const prisma = require('../config/prisma')
+const createError = require('../utils/createError')
+
+exports.register = async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+        const userExit = await prisma.user.findUnique({
+            where: {
+                email
+            }
+        })
+
+        if (userExit) {
+            return createError(400, 'User already exist')
+        }
+
+        const newUser = await prisma.user.create({
+            data: {
+                email,
+                password,
+                profile: {
+                    create: {
+                        bio,
+                    },
+                },
+            },
+            include: {
+                profile: true
+            }
+        })
+
+        res.status(201).json({ user: newUser })
+
+    } catch (error) {
+        next(error)
+    }
+
 }
 
-exports.login = (req, res, next) => {
-    const { email, password } = req.body
-    res.json({ email, password })
-}
+exports.login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+        const userExit = await prisma.user.findFirst({
+            where: {
+                email
+            },
+            select: {
+                email: true,
+                id: true
+            }
+        })
+        if (!userExit) {
+            return createError(400, 'User not exist')
+        }
+        if(password !== userExit.password) {
+            return createError(400, 'Email or Password invalid')
+        }
 
-exports.forgetPassword = (req, res, next) => {
-    const { email } = req.body
-    res.json({ email })
-}
+        delete userExit.password
 
-exports.verifyForgetPassword = (req, res, next) => {
-    const { token } = req.params
-    res.json({ token })
-}
-
-exports.resetPassword = (req, res, next) => {
-    const { token } = req.params
-    const { password } = req.body
-    res.json({ token, password })
+        res.status(201).json({ user: userExit })
+    } catch (error) {
+        next(error)
+    }
 }
